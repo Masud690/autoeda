@@ -174,6 +174,11 @@ def safe_write(pdf, text):
             pdf.multi_cell(0, 5, current)
 
 # ---------------- EXPORT ----------------
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import letter
+
+# ---------------- EXPORT ----------------
 if section == "Export":
     st.header("Download Report")
 
@@ -182,22 +187,27 @@ if section == "Export":
     else:
         if st.button("Generate PDF"):
 
-            pdf = FPDF()
-            pdf.add_page()
-            pdf.set_font("Arial", size=10)
+            doc = SimpleDocTemplate("report.pdf", pagesize=letter)
+            styles = getSampleStyleSheet()
 
-            cleaned = clean_text(st.session_state.report)
+            story = []
 
-            try:
-                safe_write(pdf, cleaned)
-            except:
-                st.error("Fallback writing used")
-                pdf.multi_cell(0, 5, cleaned[:5000])  # fallback safe
+            text = st.session_state.report
+
+            for line in text.split("\n"):
+                story.append(Paragraph(line, styles["Normal"]))
+                story.append(Spacer(1, 10))
 
             with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
-                pdf.output(tmp.name)
+                doc.filename = tmp.name
+                doc.build(story)
 
                 with open(tmp.name, "rb") as f:
-                    st.download_button("Download PDF", f, file_name="report.pdf")
+                    st.download_button(
+                        "Download PDF",
+                        f,
+                        file_name="report.pdf",
+                        mime="application/pdf"
+                    )
 
                 os.unlink(tmp.name)
