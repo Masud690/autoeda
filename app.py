@@ -23,7 +23,39 @@ st.markdown("""
 <style>
 /* ── Google Fonts ── */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
-
+# paste this right after st.markdown(""" ... CSS ... """)
+def section_header(icon, title, subtitle=""):
+    st.markdown(f"""
+    <div style="
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 20px 0 12px 0;
+        animation: fadeInUp 0.5s ease forwards;
+    ">
+        <div style="
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, rgba(0,229,255,0.15),
+                        rgba(0,102,255,0.15));
+            border: 1px solid rgba(0,229,255,0.3);
+            border-radius: 10px;
+            display: flex; align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 0 20px rgba(0,229,255,0.1);
+        ">{icon}</div>
+        <div>
+            <div style="
+                font-family: 'Orbitron', monospace;
+                font-size: 16px;
+                font-weight: 700;
+                color: #fff;
+                letter-spacing: 0.05em;
+            ">{title}</div>
+            {f'<div style="color:#555;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;">{subtitle}</div>' if subtitle else ''}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 /* ── Global Background ── */
 .stApp {
     background: linear-gradient(135deg, #0a0a0f 0%, #0d1117 50%, #0a0f1a 100%);
