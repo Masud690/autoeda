@@ -147,6 +147,37 @@ if section == "🤖 Report":
             st.write(st.session_state.report)
 
 # ------------------ EXPORT ------------------
+def clean_text(text):
+    # Remove problematic unicode characters
+    replacements = {
+        '\u2014': '-', '\u2013': '-', '\u2018': "'", '\u2019': "'",
+        '\u201c': '"', '\u201d': '"', '\u2022': '-',
+        '\u00a0': ' ', '\u20b9': 'Rs', '\n\n': '\n'
+    }
+    for k, v in replacements.items():
+        text = text.replace(k, v)
+
+    # Remove non-latin characters
+    text = text.encode('latin-1', 'replace').decode('latin-1')
+
+    return text
+
+
+def safe_multi_cell(pdf, text):
+    for line in text.split("\n"):
+        if len(line.strip()) == 0:
+            pdf.ln(4)
+            continue
+
+        # break very long words manually
+        while len(line) > 90:
+            pdf.multi_cell(0, 5, line[:90])
+            line = line[90:]
+
+        pdf.multi_cell(0, 5, line)
+
+
+# ------------------ EXPORT ------------------
 if section == "📄 Export":
     st.header("📄 Download Report")
 
@@ -158,8 +189,9 @@ if section == "📄 Export":
             pdf.add_page()
             pdf.set_font("Arial", size=10)
 
-            for line in st.session_state.report.split("\n"):
-                pdf.multi_cell(0, 5, line)
+            cleaned = clean_text(st.session_state.report)
+
+            safe_multi_cell(pdf, cleaned)
 
             with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
                 pdf.output(tmp.name)
