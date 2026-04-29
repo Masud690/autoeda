@@ -279,14 +279,6 @@ hr {
 
 </style>
 """, unsafe_allow_html=True)
-# Instead of st.subheader("📊 Dataset Overview")
-section_header("📊", "DATASET OVERVIEW", "shape, types and sample data")
-
-# Instead of st.subheader("🚨 Outlier Detection (IQR Method)")
-section_header("🚨", "OUTLIER DETECTION", "IQR method")
-
-# Instead of st.subheader("🧠 AI-Driven Smart Dashboard")
-section_header("🧠", "AI SMART DASHBOARD", "LLM decides the best analysis")
 st.title("⚡ autoEDA - Phase 1, 2 & Smart Dashboard")
 
 file = st.file_uploader("Upload CSV", type=["csv"])
@@ -303,7 +295,7 @@ if file:
     cat_cols = df.select_dtypes(include="object").columns.tolist()
 
     # ── PHASE 1: Overview ─────────────────────────────
-    st.subheader("📊 Dataset Overview")
+    section_header("📊", "DATASET OVERVIEW", "shape, types and sample data")
     c1, c2, c3, c4, c5 = st.columns(5)
     c1.metric("Rows", df.shape[0])
     c2.metric("Columns", df.shape[1])
@@ -314,7 +306,7 @@ if file:
     st.dataframe(df.head(10), use_container_width=True)
 
     # ── Missing Values ─────────────────────────────────
-    st.subheader("🔍 Missing Values")
+    section_header("🔍", "MISSING VALUES", "null and empty value detection")
     missing = df.isnull().sum()
     missing = missing[missing > 0]
     if missing.empty:
@@ -323,18 +315,18 @@ if file:
         st.bar_chart(missing)
 
     # ── Descriptive Stats ──────────────────────────────
-    st.subheader("📈 Descriptive Statistics")
+    ssection_header("📈", "DESCRIPTIVE STATISTICS", "mean, std, min, max and percentiles")
     st.dataframe(df.describe().T, use_container_width=True)
 
     # ── Distribution Plot ──────────────────────────────
-    st.subheader("📉 Column Distribution")
+    section_header("📉", "COLUMN DISTRIBUTION", "histogram and box plot")
     col = st.selectbox("Select numeric column", num_cols)
     fig = px.histogram(df, x=col, nbins=30, marginal="box",
                        color_discrete_sequence=["#00e5ff"])
     st.plotly_chart(fig, use_container_width=True)
 
     # ── Outlier Detection ──────────────────────────────
-    st.subheader("🚨 Outlier Detection (IQR Method)")
+    section_header("🚨", "OUTLIER DETECTION", "IQR method")
     outlier_cols = []
     for c in num_cols:
         q1, q3 = df[c].quantile(0.25), df[c].quantile(0.75)
@@ -348,7 +340,7 @@ if file:
 
     # ── Outlier Treatment ─────────────────────────────
     st.divider()
-    st.subheader("🛠️ Outlier Treatment")
+    section_header("🛠️", "OUTLIER TREATMENT", "cap, remove or keep")
 
     if not outlier_cols:
         st.success("✅ No outliers to treat!")
@@ -454,14 +446,14 @@ if file:
 
     # ── Correlation Heatmap ────────────────────────────
     if len(num_cols) >= 2:
-        st.subheader("🔗 Correlation Heatmap")
+        section_header("🔗", "CORRELATION HEATMAP", "relationships between numeric columns")
         corr = df[num_cols].corr()
         fig2 = px.imshow(corr, text_auto=True, color_continuous_scale="RdBu_r")
         st.plotly_chart(fig2, use_container_width=True)
 
     # ── Categorical Counts ─────────────────────────────
     if cat_cols:
-        st.subheader("🏷️ Categorical Column Counts")
+        section_header("🏷️", "CATEGORICAL COUNTS", "value distribution per category")
         cat = st.selectbox("Select categorical column", cat_cols)
         vc = df[cat].value_counts().reset_index()
         vc.columns = ["category", "count"]
