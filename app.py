@@ -1015,7 +1015,7 @@ if file:
                 )
 
                 st.success("✅ Report generated!")
-st.balloons()  # built-in Streamlit confetti
+  # built-in Streamlit confetti
 
 # Extra JS confetti burst
 st.markdown("""
