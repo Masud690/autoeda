@@ -279,6 +279,14 @@ hr {
 
 </style>
 """, unsafe_allow_html=True)
+# Instead of st.subheader("📊 Dataset Overview")
+section_header("📊", "DATASET OVERVIEW", "shape, types and sample data")
+
+# Instead of st.subheader("🚨 Outlier Detection (IQR Method)")
+section_header("🚨", "OUTLIER DETECTION", "IQR method")
+
+# Instead of st.subheader("🧠 AI-Driven Smart Dashboard")
+section_header("🧠", "AI SMART DASHBOARD", "LLM decides the best analysis")
 st.title("⚡ autoEDA - Phase 1, 2 & Smart Dashboard")
 
 file = st.file_uploader("Upload CSV", type=["csv"])
