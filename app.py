@@ -18,33 +18,266 @@ api_key = os.getenv("GROQ_API_KEY")
 st.set_page_config(page_title="AutoEDA", layout="wide")
 # ── Custom CSS & Animations ────────────────────────
 # Replace your current title with this
+# ── Custom CSS & Animations ────────────────────────
 st.markdown("""
-<div style="text-align:center; padding: 40px 0 20px 0;">
-    <div style="
-        font-family: 'Orbitron', monospace;
-        font-size: 42px;
-        font-weight: 900;
-        background: linear-gradient(90deg, #00e5ff, #0066ff, #c77dff);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        letter-spacing: 0.15em;
-        margin-bottom: 8px;
-    ">⚡ AutoEDA</div>
-    <div style="
-        color: #555;
-        font-size: 13px;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        font-family: 'Inter', sans-serif;
-    ">AI-Powered Exploratory Data Analysis Engine</div>
-    <div style="
-        width: 100px;
-        height: 2px;
-        background: linear-gradient(90deg, #00e5ff, #c77dff);
-        margin: 16px auto 0;
-        border-radius: 2px;
-    "></div>
-</div>
+<style>
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ── Global Background ── */
+.stApp {
+    background: linear-gradient(135deg, #0a0a0f 0%, #0d1117 50%, #0a0f1a 100%);
+    font-family: 'Inter', sans-serif;
+}
+
+/* ── Animated Background Grid ── */
+.stApp::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image:
+        linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridMove 20s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes gridMove {
+    0%   { transform: translateY(0); }
+    100% { transform: translateY(50px); }
+}
+
+/* ── Main Title ── */
+h1 {
+    font-family: 'Orbitron', monospace !important;
+    background: linear-gradient(90deg, #00e5ff, #0066ff, #c77dff);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 3s ease infinite;
+    letter-spacing: 0.1em !important;
+}
+
+@keyframes gradientShift {
+    0%   { background-position: 0% center; }
+    50%  { background-position: 100% center; }
+    100% { background-position: 0% center; }
+}
+
+/* ── Subheaders ── */
+h2, h3 {
+    font-family: 'Orbitron', monospace !important;
+    color: #00e5ff !important;
+    letter-spacing: 0.05em !important;
+    text-shadow: 0 0 20px rgba(0,229,255,0.4);
+}
+
+/* ── Metric Cards ── */
+[data-testid="metric-container"] {
+    background: rgba(0,229,255,0.05) !important;
+    border: 1px solid rgba(0,229,255,0.2) !important;
+    border-radius: 12px !important;
+    padding: 16px !important;
+    transition: all 0.3s ease !important;
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+[data-testid="metric-container"]:hover {
+    background: rgba(0,229,255,0.1) !important;
+    border-color: rgba(0,229,255,0.5) !important;
+    transform: translateY(-4px) !important;
+    box-shadow: 0 8px 32px rgba(0,229,255,0.2) !important;
+}
+
+[data-testid="metric-container"] label {
+    color: #888 !important;
+    font-size: 11px !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase !important;
+}
+
+[data-testid="metric-container"] [data-testid="stMetricValue"] {
+    color: #00e5ff !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 28px !important;
+    text-shadow: 0 0 10px rgba(0,229,255,0.5);
+}
+
+/* ── Buttons ── */
+.stButton > button {
+    background: linear-gradient(135deg, rgba(0,229,255,0.1), rgba(0,102,255,0.1)) !important;
+    border: 1px solid rgba(0,229,255,0.3) !important;
+    color: #00e5ff !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.05em !important;
+    border-radius: 8px !important;
+    padding: 10px 24px !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.stButton > button::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent,
+                rgba(0,229,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.stButton > button:hover::before {
+    left: 100%;
+}
+
+.stButton > button:hover {
+    background: linear-gradient(135deg, rgba(0,229,255,0.2),
+                rgba(0,102,255,0.2)) !important;
+    border-color: rgba(0,229,255,0.6) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(0,229,255,0.3) !important;
+}
+
+.stButton > button:active {
+    transform: translateY(0px) !important;
+}
+
+/* ── Primary Buttons ── */
+.stButton > button[kind="primary"] {
+    background: linear-gradient(135deg, #00e5ff, #0066ff) !important;
+    color: #000 !important;
+    border: none !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 20px rgba(0,229,255,0.3) !important;
+}
+
+.stButton > button[kind="primary"]:hover {
+    background: linear-gradient(135deg, #33eaff, #3385ff) !important;
+    box-shadow: 0 8px 30px rgba(0,229,255,0.5) !important;
+    transform: translateY(-3px) !important;
+}
+
+/* ── Dataframe ── */
+[data-testid="stDataFrame"] {
+    border: 1px solid rgba(0,229,255,0.15) !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+/* ── File Uploader ── */
+[data-testid="stFileUploader"] {
+    border: 2px dashed rgba(0,229,255,0.3) !important;
+    border-radius: 16px !important;
+    background: rgba(0,229,255,0.02) !important;
+    transition: all 0.3s ease !important;
+    animation: pulse 2s ease infinite;
+}
+
+[data-testid="stFileUploader"]:hover {
+    border-color: rgba(0,229,255,0.6) !important;
+    background: rgba(0,229,255,0.05) !important;
+    animation: none !important;
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,229,255,0.2); }
+    50%       { box-shadow: 0 0 0 8px rgba(0,229,255,0); }
+}
+
+/* ── Success / Warning / Info boxes ── */
+[data-testid="stAlert"] {
+    border-radius: 10px !important;
+    animation: slideInLeft 0.4s ease forwards;
+}
+
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-20px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Selectbox ── */
+[data-testid="stSelectbox"] > div {
+    background: rgba(0,229,255,0.05) !important;
+    border: 1px solid rgba(0,229,255,0.2) !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+}
+
+[data-testid="stSelectbox"] > div:hover {
+    border-color: rgba(0,229,255,0.5) !important;
+    box-shadow: 0 0 15px rgba(0,229,255,0.15) !important;
+}
+
+/* ── Sidebar ── */
+[data-testid="stSidebar"] {
+    background: rgba(10,10,20,0.95) !important;
+    border-right: 1px solid rgba(0,229,255,0.1) !important;
+}
+
+/* ── Divider ── */
+hr {
+    border: none !important;
+    height: 1px !important;
+    background: linear-gradient(90deg, transparent,
+                rgba(0,229,255,0.4), transparent) !important;
+    margin: 24px 0 !important;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: #0a0a0f; }
+::-webkit-scrollbar-thumb {
+    background: rgba(0,229,255,0.3);
+    border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.6); }
+
+/* ── Fade In Up Animation ── */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Spinner Override ── */
+.stSpinner > div {
+    border-top-color: #00e5ff !important;
+}
+
+/* ── Caption text ── */
+.stCaption {
+    color: #555 !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 11px !important;
+}
+
+/* ── Radio buttons ── */
+[data-testid="stRadio"] label {
+    color: #aaa !important;
+    transition: color 0.2s ease !important;
+}
+
+[data-testid="stRadio"] label:hover {
+    color: #00e5ff !important;
+}
+
+/* ── Plotly charts glow ── */
+.js-plotly-plot {
+    border-radius: 12px !important;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.5) !important;
+    transition: box-shadow 0.3s ease !important;
+}
+
+.js-plotly-plot:hover {
+    box-shadow: 0 8px 40px rgba(0,229,255,0.15) !important;
+}
+
+</style>
 """, unsafe_allow_html=True)
 st.title("⚡ autoEDA - Phase 1, 2 & Smart Dashboard")
 
